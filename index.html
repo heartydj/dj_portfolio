@@ -612,7 +612,7 @@ footer{padding:2.5rem 3rem;display:flex;align-items:center;justify-content:space
     <div class="hc-img">
       <img src="dj.jpg"
            alt="Dharani Jayan — Graphic Designer"
-           onerror="this.style.display='none'">
+           onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://heartydj.github.io/freelancer-portfolio/dj.jpg';}else{this.style.display='none';}">
       <div class="hc-img-glow"></div>
       <div class="hc-corner">DJ ✦</div>
     </div>

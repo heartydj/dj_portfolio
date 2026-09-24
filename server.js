@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -467,6 +468,30 @@ app.delete('/api/branding/:id', requireAuth, async (req, res) => {
     console.error('Delete branding error:', err);
     res.status(500).json({ error: 'Failed to delete branding work from MongoDB.' });
   }
+});
+
+/* ── ADMIN STUDIO ROUTES ── */
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+/* ── STATIC MEDIA HANDLER (LOCAL DISK + GITHUB PAGES CDN FALLBACK) ── */
+app.use((req, res, next) => {
+  const ext = path.extname(req.path).toLowerCase();
+  const mediaExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.gif', '.ico', '.pdf'];
+  if (mediaExtensions.includes(ext)) {
+    const filename = path.basename(req.path);
+    const localFile = path.join(__dirname, filename);
+    if (fs.existsSync(localFile)) {
+      return res.sendFile(localFile);
+    }
+    // Automatically redirect to GitHub Pages CDN where all portfolio assets are permanently hosted
+    return res.redirect(302, `https://heartydj.github.io/freelancer-portfolio/${encodeURIComponent(filename)}`);
+  }
+  next();
 });
 
 /* ── CATCH-ALL ROUTE: SERVE FRONTEND ── */
