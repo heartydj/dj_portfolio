@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data: blob:; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Admin Studio — Dharani Jayan Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & TOKENS ─── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--s1:#0f0f0f;--s2:#141414;--s3:#1a1a1a;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#efefef;--muted:rgba(239,239,239,0.48);--muted2:rgba(239,239,239,0.25);
+  --accent:#C9FF57;--accent-d:rgba(201,255,87,0.12);--accent-d2:rgba(201,255,87,0.05);
+  --danger:#ff5252;--danger-d:rgba(255,82,82,0.15);
+  --success:#4caf50;--success-d:rgba(76,175,80,0.15);
+  --warning:#ffb74d;--warning-d:rgba(255,183,77,0.15);
+  --r-ease:cubic-bezier(0.16,1,0.3,1);
+  --fd:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text);font-family:var(--fb);font-weight:300;
+  min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(201,255,87,.4)}
+::selection{background:var(--accent);color:#080808}
+
+/* ─── BUTTONS & INPUTS ─── */
+button,input,select,textarea{font-family:inherit;color:inherit}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.7rem 1.4rem;font-family:var(--fd);font-size:.72rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:4px;cursor:pointer;
+  transition:all .25s var(--r-ease);text-decoration:none;border:none;
+}
+.btn-primary{background:var(--accent);color:#080808}
+.btn-primary:hover{box-shadow:0 0 25px rgba(201,255,87,.35);transform:translateY(-1px)}
+.btn-secondary{background:var(--s2);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-d)}
+.btn-danger{background:var(--danger-d);color:var(--danger);border:1px solid rgba(255,82,82,.4)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-sm{padding:.42rem .85rem;font-size:.65rem}
+.btn-icon{width:34px;height:34px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:4px}
+
+.form-group{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.25rem}
+.form-label{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+.form-label span.req{color:var(--accent)}
+.form-label span.hint{font-family:var(--fb);font-size:.68rem;color:var(--muted);text-transform:none;font-weight:400}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:.8rem 1rem;background:var(--s2);border:1px solid var(--border2);
+  color:var(--text);font-size:.85rem;border-radius:4px;transition:border-color .2s,box-shadow .2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,255,87,.12);
+}
+.form-textarea{resize:vertical;min-height:80px}
+.form-error{color:var(--danger);font-size:.7rem;margin-top:.3rem;display:none}
+
+/* ─── SECURITY BADGES ─── */
+.sec-pill{
+  display:inline-flex;align-items:center;gap:.4rem;padding:.22rem .65rem;
+  background:rgba(201,255,87,.1);border:1px solid rgba(201,255,87,.3);
+  color:var(--accent);font-family:var(--fd);font-size:.6rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:999px;
+}
+.sec-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.4)}}
+
+/* ─── LOGIN SCREEN ─── */
+#loginView{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  padding:2rem 1.5rem;position:relative;min-height:100vh;
+}
+.login-box{
+  width:100%;max-width:440px;background:var(--s1);border:1px solid var(--border2);
+  padding:2.5rem;position:relative;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.7);
+}
+.login-box::before{
+  content:'';position:absolute;top:-1px;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.login-logo{font-family:var(--fd);font-size:1.6rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.login-logo span{color:var(--accent)}
+.login-desc{font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:2rem}
+.login-security-notice{
+  background:rgba(255,255,255,.02);border:1px solid var(--border);
+  padding:.85rem;border-radius:4px;margin-bottom:1.5rem;font-size:.72rem;color:var(--muted);
+  line-height:1.5;
+}
+.login-security-notice strong{color:var(--text)}
+.login-security-notice code{background:rgba(201,255,87,.12);color:var(--accent);padding:.1rem .35rem;border-radius:3px;font-family:monospace}
+.lockout-banner{
+  background:var(--danger-d);border:1px solid rgba(255,82,82,.4);color:var(--danger);
+  padding:1rem;border-radius:4px;font-size:.8rem;margin-bottom:1.5rem;display:none;
+}
+
+/* ─── ADMIN DASHBOARD ─── */
+#adminView{display:none;flex-direction:column;min-height:100vh}
+
+/* Top Nav */
+.adm-nav{
+  background:rgba(15,15,15,.95);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:1000;backdrop-filter:blur(16px);
+  padding:.9rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;
+}
+.adm-nav-left{display:flex;align-items:center;gap:1.5rem}
+.adm-logo{font-family:var(--fd);font-size:1.15rem;font-weight:800;letter-spacing:-.02em;color:var(--text);text-decoration:none}
+.adm-logo span{color:var(--accent)}
+.adm-nav-right{display:flex;align-items:center;gap:.85rem;flex-wrap:wrap}
+.adm-session-timer{
+  font-size:.7rem;color:var(--muted);font-family:var(--fd);font-weight:600;
+  letter-spacing:.05em;display:flex;align-items:center;gap:.4rem;padding:.3rem .7rem;
+  background:var(--s2);border:1px solid var(--border);border-radius:4px;
+}
+.adm-session-timer span.time{color:var(--accent);font-family:monospace;font-size:.78rem}
+
+/* Container */
+.adm-main{flex:1;padding:2.5rem;max-width:1440px;margin:0 auto;width:100%}
+
+/* Stats Row */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:2.5rem}
+.stat-card{
+  background:var(--s1);border:1px solid var(--border);padding:1.4rem 1.6rem;
+  border-radius:4px;position:relative;overflow:hidden;
+}
+.stat-card::after{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;
+  background:var(--accent);opacity:0;transition:opacity .3s;
+}
+.stat-card:hover::after{opacity:1}
+.stat-num{font-family:var(--fd);font-size:2rem;font-weight:800;letter-spacing:-.03em;color:var(--accent);line-height:1;margin-bottom:.4rem}
+.stat-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.stat-sub{font-size:.72rem;color:var(--muted2);margin-top:.4rem}
+
+/* Section Switcher Tabs */
+.sec-tabs{display:flex;gap:.75rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:.85rem}
+.sec-tab{
+  padding:.65rem 1.35rem;background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:var(--fd);font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  border-radius:4px;cursor:pointer;transition:all .25s var(--r-ease);display:inline-flex;align-items:center;gap:.6rem;
+}
+.sec-tab:hover{color:var(--text);border-color:var(--border2);background:var(--s2)}
+.sec-tab.active{background:var(--accent);color:#080808;border-color:var(--accent);box-shadow:0 0 20px rgba(201,255,87,.2)}
+.sec-tab-badge{padding:.12rem .5rem;border-radius:999px;font-size:.65rem;background:rgba(0,0,0,.2);color:#080808;font-weight:800}
+.sec-tab:not(.active) .sec-tab-badge{background:var(--s2);color:var(--accent);border:1px solid var(--border)}
+
+/* Controls Bar */
+.ctrl-bar{
+  background:var(--s1);border:1px solid var(--border);padding:1.2rem 1.5rem;
+  border-radius:4px;margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap;
+}
+.ctrl-left{display:flex;align-items:center;gap:1rem;flex:1;min-width:280px;flex-wrap:wrap}
+.search-box{position:relative;flex:1;min-width:220px;max-width:360px}
+.search-box input{
+  width:100%;padding:.6rem .9rem .6rem 2.2rem;background:var(--s2);border:1px solid var(--border2);
+  color:var(--text);border-radius:4px;font-size:.8rem;
+}
+.search-icon{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);font-size:.8rem;color:var(--muted);pointer-events:none}
+.ctrl-right{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+
+/* Projects Grid */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;margin-bottom:3rem}
+.prj-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:6px;overflow:hidden;
+  transition:all .3s var(--r-ease);display:flex;flex-direction:column;position:relative;
+}
+.prj-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.prj-card-thumb{position:relative;width:100%;aspect-ratio:16/10;background:var(--s2);overflow:hidden}
+.prj-card-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--r-ease)}
+.prj-card:hover .prj-card-thumb img{transform:scale(1.05)}
+.prj-card-badges{position:absolute;top:.75rem;left:.75rem;right:.75rem;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.badge-cat{
+  padding:.2rem .55rem;background:rgba(8,8,8,.85);border:1px solid rgba(201,255,87,.3);
+  color:var(--accent);font-family:var(--fd);font-size:.58rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:3px;backdrop-filter:blur(6px);
+}
+.badge-row{
+  padding:.2rem .55rem;background:rgba(8,8,8,.85);border:1px solid var(--border2);
+  color:var(--muted);font-family:var(--fd);font-size:.58rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;border-radius:3px;backdrop-filter:blur(6px);
+}
+.prj-card-body{padding:1.25rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.prj-card-title{font-family:var(--fd);font-size:1.05rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem;line-height:1.25}
+.prj-card-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.2rem}
+.prj-tag-pill{
+  padding:.12rem .45rem;background:var(--s2);border:1px solid var(--border);
+  font-size:.62rem;color:var(--muted);border-radius:3px;
+}
+.prj-card-actions{display:flex;align-items:center;justify-content:space-between;gap:.5rem;border-top:1px solid var(--border);padding-top:1rem;margin-top:auto}
+.prj-card-reorder{display:flex;gap:4px}
+
+/* Empty State */
+.empty-state{
+  grid-column:1/-1;background:var(--s1);border:1px dashed var(--border2);
+  padding:4rem 2rem;text-align:center;border-radius:6px;
+}
+.empty-state h3{font-family:var(--fd);font-size:1.3rem;margin-bottom:.5rem}
+.empty-state p{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+
+/* ─── MODALS ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(5,5,5,.88);backdrop-filter:blur(8px);
+  z-index:90000;display:none;align-items:center;justify-content:center;padding:1.5rem;
+  overflow-y:auto;
+}
+.modal-overlay.open{display:flex}
+.modal-dialog{
+  width:100%;max-width:680px;background:var(--s1);border:1px solid var(--border2);
+  border-radius:6px;box-shadow:0 30px 90px rgba(0,0,0,.85);max-height:calc(100vh - 3rem);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;margin:auto;
+}
+.modal-dialog form{
+  display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;
+}
+.modal-header{
+  padding:1.3rem 1.8rem;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;flex-shrink:0;background:var(--s1);
+}
+.modal-title{font-family:var(--fd);font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.modal-close{
+  background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:4px;
+}
+.modal-close:hover{color:var(--accent);background:var(--s2)}
+.modal-body{
+  padding:1.8rem;overflow-y:auto;flex:1;min-height:0;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:rgba(201,255,87,.4) var(--s2);
+}
+.modal-body::-webkit-scrollbar{width:6px}
+.modal-body::-webkit-scrollbar-track{background:var(--s2)}
+.modal-body::-webkit-scrollbar-thumb{background:rgba(201,255,87,.4);border-radius:3px}
+.modal-body::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+.modal-footer{
+  padding:1.2rem 1.8rem;border-top:1px solid var(--border);display:flex;
+  align-items:center;justify-content:flex-end;gap:.85rem;background:var(--s2);flex-shrink:0;
+}
+
+/* Upload drop zone */
+.dropzone{
+  border:2px dashed var(--border2);background:var(--s2);padding:1.5rem;text-align:center;
+  border-radius:4px;cursor:pointer;transition:all .3s;margin-top:.4rem;position:relative;
+}
+.dropzone:hover,.dropzone.dragover{border-color:var(--accent);background:var(--accent-d2)}
+.dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dropzone-icon{font-size:1.8rem;color:var(--accent);margin-bottom:.5rem;display:block}
+.dropzone-txt{font-size:.78rem;color:var(--text);font-weight:500}
+.dropzone-hint{font-size:.68rem;color:var(--muted);margin-top:.3rem}
+
+/* Live Card Preview inside Modal */
+.preview-box{
+  background:var(--s2);border:1px solid var(--border);padding:1.2rem;border-radius:4px;
+  margin-top:1.5rem;
+}
+.preview-title{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.85rem}
+.mini-card-preview{
+  width:180px;aspect-ratio:3/4;background:#141414;border:1px solid var(--border2);
+  position:relative;overflow:hidden;margin:0 auto;box-shadow:0 12px 30px rgba(0,0,0,.6);
+}
+.mini-card-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.mini-card-ov{
+  position:absolute;inset:0;background:rgba(8,8,8,.75);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.3rem;padding:.8rem;text-align:center;
+}
+.mini-card-tag{padding:.1rem .4rem;background:rgba(201,255,87,.15);border:1px solid rgba(201,255,87,.3);font-size:.5rem;font-weight:700;color:var(--accent);text-transform:uppercase}
+.mini-card-name{font-family:var(--fd);font-size:.75rem;font-weight:800;color:#fff;line-height:1.2}
+
+/* Image input mode tabs */
+.img-tabs{display:flex;gap:4px;margin-bottom:.6rem;background:var(--s3);padding:3px;border-radius:4px;width:fit-content}
+.img-tab-btn{padding:.35rem .85rem;background:none;border:none;font-size:.7rem;font-weight:600;color:var(--muted);cursor:pointer;border-radius:3px}
+.img-tab-btn.active{background:var(--accent);color:#080808}
+
+/* ─── TOAST NOTIFICATIONS ─── */
+.toast-container{position:fixed;bottom:2rem;right:2rem;z-index:99999;display:flex;flex-direction:column;gap:.6rem;pointer-events:none}
+.toast{
+  pointer-events:auto;min-width:280px;max-width:380px;padding:.85rem 1.25rem;border-radius:4px;
+  background:var(--s1);border:1px solid var(--border2);box-shadow:0 14px 40px rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:space-between;gap:.8rem;font-size:.8rem;
+  transform:translateX(50px);opacity:0;transition:all .3s var(--r-ease);
+}
+.toast.show{transform:translateX(0);opacity:1}
+.toast-success{border-left:3px solid var(--accent)}
+.toast-error{border-left:3px solid var(--danger)}
+.toast-info{border-left:3px solid var(--warning)}
+
+/* ─── AUDIT LOG TABLE ─── */
+.audit-list{display:flex;flex-direction:column;gap:.5rem;max-height:400px;overflow-y:auto}
+.audit-row{
+  display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;
+  background:var(--s2);border:1px solid var(--border);border-radius:4px;font-size:.75rem;gap:1rem;
+}
+.audit-time{font-family:monospace;color:var(--muted);font-size:.7rem;white-space:nowrap}
+.audit-msg{flex:1;color:var(--text)}
+.audit-tag{font-size:.62rem;font-family:var(--fd);font-weight:700;text-transform:uppercase;padding:.15rem .45rem;border-radius:3px}
+.audit-tag.auth{background:var(--accent-d);color:var(--accent)}
+.audit-tag.crud{background:rgba(255,255,255,.08);color:var(--text)}
+.audit-tag.alert{background:var(--danger-d);color:var(--danger)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .adm-nav{padding:1rem 1.5rem}
+  .adm-main{padding:1.5rem}
+}
+@media(max-width:640px){
+  .stats-grid{grid-template-columns:1fr}
+  .ctrl-bar{flex-direction:column;align-items:stretch}
+  .ctrl-left{flex-direction:column;min-width:100%}
+  .search-box{max-width:100%}
+  .ctrl-right{justify-content:space-between}
+  .adm-nav{padding:1rem;flex-direction:column;align-items:flex-start;gap:1rem}
+  .adm-nav-right{width:100%;justify-content:space-between}
+  .projects-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- VIEW 1: SECURE AUTHENTICATION (OWASP A01 & A07)               -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="loginView">
+  <div class="login-box">
+    <div class="login-logo">DJ<span>.</span> Admin Studio</div>
+    <p class="login-desc">Authenticate to dynamically manage your portfolio projects.</p>
+
+    <form id="loginForm" onsubmit="handleLogin(event)" autocomplete="off">
+      <div class="form-group">
+        <label class="form-label" for="loginUser">Username <span class="req">*</span></label>
+        <input type="text" id="loginUser" class="form-input" required autocomplete="username" placeholder="Enter username" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="loginPass">Password <span class="req">*</span></label>
+        <div style="position:relative">
+          <input type="password" id="loginPass" class="form-input" required autocomplete="current-password" placeholder="Enter password" style="padding-right:2.8rem">
+          <button type="button" onclick="togglePass('loginPass', this)" style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem">Show</button>
+        </div>
+        <div id="loginError" class="form-error"></div>
+      </div>
+      <button type="submit" id="loginSubmitBtn" class="btn btn-primary" style="width:100%;margin-top:.75rem">
+        Unlock Studio ↗
+      </button>
+    </form>
+    
+    <div style="text-align:center;margin-top:1.5rem">
+      <a href="index.html" class="btn btn-secondary btn-sm" style="width:100%">&larr; Return to Portfolio</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- VIEW 2: ADMIN STUDIO DASHBOARD                                -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="adminView">
+  <!-- Top Navigation -->
+  <nav class="adm-nav">
+    <div class="adm-nav-left">
+      <a href="#" class="adm-logo">DJ<span>.</span> Admin Studio</a>
+      <div id="dbStatusPill" class="sec-pill" style="cursor:pointer" onclick="checkDbStatus(true)" title="Click to refresh MongoDB connection status">
+        <span id="dbStatusDot" class="sec-pill-dot" style="background:var(--accent)"></span>
+        <span id="dbStatusText">MongoDB: Checking...</span>
+      </div>
+    </div>
+    <div class="adm-nav-right">
+      <div class="adm-session-timer" title="Active session countdown (persists across page reloads)">
+        <span>Session:</span>
+        <span class="time" id="sessionTimer">30:00</span>
+      </div>
+      <a href="index.html" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Preview live portfolio in new tab">
+        Live Site ↗
+      </a>
+      <button onclick="openSecurityModal()" class="btn btn-secondary btn-sm" title="Security settings and audit logs">
+        Security &amp; Logs
+      </button>
+      <button onclick="handleLogout()" class="btn btn-danger btn-sm" title="End active session">
+        Logout ✕
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="adm-main">
+
+    <!-- Metrics Row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="statProjects">0</div>
+        <div class="stat-label">Total Projects</div>
+        <div class="stat-sub">Design projects marquee</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statBrandings">0</div>
+        <div class="stat-label">Branding Works</div>
+        <div class="stat-sub">Behance showcases</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="statCategories">0</div>
+        <div class="stat-label">Categories</div>
+        <div class="stat-sub">Dynamic filter tags</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--success)" id="statDbStatus">MongoDB</div>
+        <div class="stat-label">Database Storage</div>
+        <div class="stat-sub" id="statDbDetails">Connected &amp; Synced</div>
+      </div>
+    </div>
+
+    <!-- Section Switcher: Projects vs Branding -->
+    <div class="sec-tabs">
+      <button class="sec-tab active" id="secTabProjects" onclick="switchAdminSection('projects')">
+        🎨 Design Projects <span class="sec-tab-badge" id="tabProjectsBadge">0</span>
+      </button>
+      <button class="sec-tab" id="secTabBranding" onclick="switchAdminSection('branding')">
+        ✦ Branding Work <span class="sec-tab-badge" id="tabBrandingBadge">0</span>
+      </button>
+    </div>
+
+    <!-- Action & Filter Controls -->
+    <div class="ctrl-bar">
+      <div class="ctrl-left">
+        <button onclick="openProjectModal()" class="btn btn-primary" title="Add to Design Projects marquee">
+          + Add New Project
+        </button>
+        <button onclick="openBrandingModal()" class="btn btn-secondary" style="border-color:var(--accent);color:var(--accent)" title="Add to Branding Work section">
+          + Add new Branding work
+        </button>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search by title, category, or tag..." oninput="handleSearch()">
+        </div>
+      </div>
+      <div class="ctrl-right">
+        <div id="projectFiltersWrapper" style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+          <select id="categoryFilter" class="form-select" style="width:auto;padding:.6rem 1rem;font-size:.8rem" onchange="filterProjects()">
+            <option value="all">All Categories</option>
+          </select>
+          <select id="sortSelect" class="form-select" style="width:auto;padding:.6rem 1rem;font-size:.8rem" onchange="filterProjects()">
+            <option value="custom">Sort: Order (Manual)</option>
+            <option value="az">Sort: Title (A-Z)</option>
+            <option value="za">Sort: Title (Z-A)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects Grid Container -->
+    <div id="projectsGrid" class="projects-grid">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Branding Works Grid Container -->
+    <div id="brandingsGrid" class="projects-grid" style="display:none">
+      <!-- Populated dynamically -->
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: ADD / EDIT PROJECT                                      -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="projectModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="prjModalTitle">
+  <form id="projectForm" class="modal-dialog" onsubmit="handleSaveProject(event)">
+    <div class="modal-header">
+      <h3 class="modal-title" id="prjModalTitle">Add Project</h3>
+      <button type="button" class="modal-close" onclick="closeProjectModal()" aria-label="Close">✕</button>
+    </div>
+      <div class="modal-body">
+        <input type="hidden" id="editIndex" value="-1">
+
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label" for="prjTitle">
+            Project Title <span class="req">*</span>
+            <span class="hint" id="titleCharCount">0/100</span>
+          </label>
+          <input type="text" id="prjTitle" class="form-input" required maxlength="100" placeholder="e.g. CR7 — Cristiano Ronaldo" oninput="updateModalPreview()">
+        </div>
+
+        <!-- ID / Slug -->
+        <div class="form-group">
+          <label class="form-label" for="prjSlug">
+            Unique Identifier (Slug) <span class="req">*</span>
+            <span class="hint">Alphanumeric + dashes only</span>
+          </label>
+          <input type="text" id="prjSlug" class="form-input" required maxlength="50" placeholder="e.g. cr7-poster" pattern="^[a-zA-Z0-9_\-]+$">
+        </div>
+
+        <!-- Category & Row (2 columns) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div class="form-group">
+            <label class="form-label" for="prjCat">Category <span class="req">*</span></label>
+            <input type="text" id="prjCat" list="categoryDatalist" class="form-input" required placeholder="e.g. Sports, Auto, 3D" maxlength="40" oninput="updateModalPreview()">
+            <datalist id="categoryDatalist">
+              <option value="Sports">
+              <option value="Auto">
+              <option value="Branding">
+              <option value="UI/UX">
+              <option value="Poster Design">
+            </datalist>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prjRow">Marquee Row Placement</label>
+            <select id="prjRow" class="form-select">
+              <option value="1">Row 1 (Scrolls Left)</option>
+              <option value="2">Row 2 (Scrolls Right)</option>
+              <option value="auto">Auto (Balanced Distribution)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="form-group">
+          <label class="form-label" for="prjTags">
+            Tags <span class="req">*</span>
+            <span class="hint">Comma separated</span>
+          </label>
+          <input type="text" id="prjTags" class="form-input" required placeholder="e.g. Sports, Poster Design, Art" maxlength="150" oninput="updateModalPreview()">
+        </div>
+
+        <!-- External Link (Optional) -->
+        <div class="form-group">
+          <label class="form-label" for="prjLink">
+            External Project Link <span class="hint">Optional (Behance, Figma, Live URL)</span>
+          </label>
+          <input type="url" id="prjLink" class="form-input" placeholder="https://www.behance.net/gallery/..." maxlength="300">
+        </div>
+
+        <!-- Image Input: Mode Tabs (URL vs Upload) -->
+        <div class="form-group">
+          <label class="form-label">Project Image <span class="req">*</span></label>
+          
+          <div class="img-tabs">
+            <button type="button" class="img-tab-btn active" id="tabBtnUrl" onclick="switchImgTab('url')">URL / Local Filename</button>
+            <button type="button" class="img-tab-btn" id="tabBtnUpload" onclick="switchImgTab('upload')">Upload File (Base64)</button>
+          </div>
+
+          <div id="imgUrlSection">
+            <input type="text" id="prjImgUrl" class="form-input" placeholder="e.g. CR7.jpg or https://images.unsplash.com/..." oninput="updateModalPreview()">
+            <div style="font-size:.68rem;color:var(--muted);margin-top:.35rem">
+              Supports local workspace images (<code>CR7.jpg</code>, <code>FERRARI.png</code>, <code>BMW M4.jpg</code>) or secure <code>https://</code> image links.
+            </div>
+          </div>
+
+          <div id="imgUploadSection" style="display:none">
+            <div class="dropzone" id="imgDropzone">
+              <input type="file" id="prjImgFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="handleFileUpload(event)">
+              <span class="dropzone-icon">📷</span>
+              <div class="dropzone-txt" id="dropzoneTxt">Click or Drag &amp; Drop Image Here</div>
+              <div class="dropzone-hint">PNG, JPG, WEBP, or SVG &bull; Maximum 2.5MB</div>
+            </div>
+            <input type="hidden" id="prjImgDataUrl">
+          </div>
+        </div>
+
+        <!-- Live Card Preview -->
+        <div class="preview-box">
+          <div class="preview-title">Live Portfolio Card Preview</div>
+          <div class="mini-card-preview">
+            <img id="previewImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='266' fill='%23141414'><rect width='200' height='266'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23555' font-size='14' font-family='sans-serif'>Preview Image</text></svg>" alt="Preview">
+            <div class="mini-card-ov">
+              <span class="mini-card-tag" id="previewTag">CATEGORY</span>
+              <div class="mini-card-name" id="previewTitle">Project Title</div>
+              <div style="font-size:.5rem;color:var(--accent);font-weight:700">View ↗</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+        <button type="submit" id="saveProjectBtn" class="btn btn-primary">Save Project</button>
+      </div>
+  </form>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: ADD / EDIT BRANDING WORK                                -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="brandingModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="brandingModalTitle">
+  <form id="brandingForm" class="modal-dialog" onsubmit="handleSaveBranding(event)">
+    <div class="modal-header">
+      <h3 class="modal-title" id="brandingModalTitle">Add Branding Work</h3>
+      <button type="button" class="modal-close" onclick="closeBrandingModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editBrandingIndex" value="-1">
+
+      <!-- Title -->
+      <div class="form-group">
+        <label class="form-label" for="brandTitle">
+          Branding Title <span class="req">*</span>
+          <span class="hint" id="brandTitleCharCount">0/100</span>
+        </label>
+        <input type="text" id="brandTitle" class="form-input" required maxlength="100" placeholder="e.g. Uzhavan or QuickPath" oninput="updateBrandingModalPreview()">
+      </div>
+
+      <!-- ID / Slug -->
+      <div class="form-group">
+        <label class="form-label" for="brandSlug">
+          Unique Identifier (Slug) <span class="req">*</span>
+          <span class="hint">Alphanumeric + dashes only</span>
+        </label>
+        <input type="text" id="brandSlug" class="form-input" required maxlength="50" placeholder="e.g. uzhavan" pattern="^[a-zA-Z0-9_\-]+$">
+      </div>
+
+      <!-- Category / Subtitle -->
+      <div class="form-group">
+        <label class="form-label" for="brandCat">
+          Category / Subtitle <span class="req">*</span>
+          <span class="hint">e.g. Retail · Logo Design</span>
+        </label>
+        <input type="text" id="brandCat" list="brandCategoryDatalist" class="form-input" required placeholder="e.g. Retail · Logo Design, Tech · Identity" maxlength="80" oninput="updateBrandingModalPreview()">
+        <datalist id="brandCategoryDatalist">
+          <option value="Retail · Logo Design">
+          <option value="Tech · Logo Design">
+          <option value="Roofing · Full Identity">
+          <option value="Education · Brand Identity">
+          <option value="Brand Identity">
+          <option value="Visual Identity">
+        </datalist>
+      </div>
+
+      <!-- Behance URL -->
+      <div class="form-group">
+        <label class="form-label" for="brandBehanceUrl">
+          Behance Project URL <span class="req">*</span>
+          <span class="hint">Direct link to Behance showcase</span>
+        </label>
+        <input type="url" id="brandBehanceUrl" class="form-input" required placeholder="https://www.behance.net/gallery/..." maxlength="300">
+      </div>
+
+      <!-- Image Input: Mode Tabs (URL vs Upload) -->
+      <div class="form-group">
+        <label class="form-label">Branding Cover Image <span class="req">*</span></label>
+        
+        <div class="img-tabs">
+          <button type="button" class="img-tab-btn active" id="brandTabBtnUrl" onclick="switchBrandImgTab('url')">URL / Local Filename</button>
+          <button type="button" class="img-tab-btn" id="brandTabBtnUpload" onclick="switchBrandImgTab('upload')">Upload File (Base64)</button>
+        </div>
+
+        <div id="brandImgUrlSection">
+          <input type="text" id="brandImgUrl" class="form-input" placeholder="e.g. U.png or https://heartydj.github.io/freelancer-portfolio/QP.png" oninput="updateBrandingModalPreview()">
+          <div style="font-size:.68rem;color:var(--muted);margin-top:.35rem">
+            Supports local filenames (<code>U.png</code>, <code>QP.png</code>, <code>kriscol.png</code>, <code>keshri.png</code>) or full <code>https://</code> image links.
+          </div>
+        </div>
+
+        <div id="brandImgUploadSection" style="display:none">
+          <div class="dropzone" id="brandImgDropzone">
+            <input type="file" id="brandImgFile" accept="image/png,image/jpeg,image/webp,image/svg+xml" onchange="handleBrandFileUpload(event)">
+            <span class="dropzone-icon">📷</span>
+            <div class="dropzone-txt" id="brandDropzoneTxt">Click or Drag &amp; Drop Image Here</div>
+            <div class="dropzone-hint">PNG, JPG, WEBP, or SVG &bull; Maximum 2.5MB</div>
+          </div>
+          <input type="hidden" id="brandImgDataUrl">
+        </div>
+      </div>
+
+      <!-- Live Branding Card Preview -->
+      <div class="preview-box">
+        <div class="preview-title">Live Branding Card Preview (Behance Style)</div>
+        <div style="max-width:240px;margin:0 auto;background:#080808;border:1px solid var(--border2);border-radius:4px;overflow:hidden">
+          <div style="position:relative;width:100%;aspect-ratio:4/3;background:#141414;overflow:hidden">
+            <img id="brandPreviewImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='180' fill='%23141414'><rect width='240' height='180'/><text x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23555' font-size='12' font-family='sans-serif'>Preview Image</text></svg>" alt="Preview" style="width:100%;height:100%;object-fit:cover;display:block">
+            <div style="position:absolute;inset:0;background:rgba(8,8,8,.65);display:flex;align-items:center;justify-content:center;gap:.4rem;color:#fff;font-size:.7rem;font-weight:700">
+              <span style="background:var(--accent);color:#080808;padding:.15rem .35rem;border-radius:2px;font-size:.6rem">Be</span>
+              <span>View on Behance</span>
+            </div>
+          </div>
+          <div style="padding:.8rem;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div id="brandPreviewTitle" style="font-family:var(--fd);font-size:.85rem;font-weight:800;color:var(--text)">Branding Title</div>
+              <div id="brandPreviewCat" style="font-size:.65rem;color:var(--muted)">Category · Subtitle</div>
+            </div>
+            <span style="color:var(--accent);font-size:.9rem">↗</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeBrandingModal()">Cancel</button>
+      <button type="submit" id="saveBrandingBtn" class="btn btn-primary">Save Branding Work</button>
+    </div>
+  </form>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: SECURITY & AUDIT LOGS (OWASP A01, A02, A05)            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="securityModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="secModalTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h3 class="modal-title" id="secModalTitle">Security Center &amp; Audit Logs</h3>
+      <button class="modal-close" onclick="closeSecurityModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      
+      <!-- Change Password Section -->
+      <h4 style="font-family:var(--fd);font-size:.9rem;margin-bottom:1rem;color:var(--accent)">
+        Change Admin Password
+      </h4>
+      <form id="changePassForm" onsubmit="handleChangePassword(event)" style="margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+        <div class="form-group">
+          <label class="form-label" for="currPass">Current Password <span class="req">*</span></label>
+          <input type="password" id="currPass" class="form-input" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="newPass">
+            New Password <span class="req">*</span>
+            <span class="hint">Min 8 chars: Upper, Lower, Number, Symbol</span>
+          </label>
+          <input type="password" id="newPass" class="form-input" required autocomplete="new-password" oninput="checkPassStrength(this.value)">
+          <div id="passStrengthBar" style="height:4px;background:var(--border);margin-top:6px;border-radius:2px;overflow:hidden">
+            <div id="passStrengthFill" style="height:100%;width:0;background:var(--danger);transition:width .3s,background .3s"></div>
+          </div>
+          <div id="passStrengthTxt" style="font-size:.68rem;color:var(--muted);margin-top:.2rem">Enter a strong password</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confPass">Confirm New Password <span class="req">*</span></label>
+          <input type="password" id="confPass" class="form-input" required autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-secondary btn-sm">Update Password</button>
+      </form>
+
+      <!-- Security Controls Summary -->
+      <h4 style="font-family:var(--fd);font-size:.9rem;margin-bottom:.75rem;color:var(--accent)">
+        Active OWASP Security Protections
+      </h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:2rem;font-size:.74rem">
+        <div style="background:var(--s2);padding:.75rem;border-radius:4px;border:1px solid var(--border)">
+          <strong style="color:var(--accent)">A01 / A07: Access Control</strong>
+          <p style="color:var(--muted);margin-top:.2rem">Cryptographic session tokens, 30m idle timeout, 5-attempt rate-limiting lockout.</p>
+        </div>
+        <div style="background:var(--s2);padding:.75rem;border-radius:4px;border:1px solid var(--border)">
+          <strong style="color:var(--accent)">A02: Cryptography</strong>
+          <p style="color:var(--muted);margin-top:.2rem">Web Crypto API SHA-256 with unique 128-bit cryptographic salt.</p>
+        </div>
+        <div style="background:var(--s2);padding:.75rem;border-radius:4px;border:1px solid var(--border)">
+          <strong style="color:var(--accent)">A03: Injection &amp; XSS</strong>
+          <p style="color:var(--muted);margin-top:.2rem">Contextual HTML entity escaping and strict URI scheme validation.</p>
+        </div>
+        <div style="background:var(--s2);padding:.75rem;border-radius:4px;border:1px solid var(--border)">
+          <strong style="color:var(--accent)">A05: Misconfiguration</strong>
+          <p style="color:var(--muted);margin-top:.2rem">Content Security Policy, anti-clickjacking framebusting, nosniff headers.</p>
+        </div>
+      </div>
+
+      <!-- Audit Logs -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+        <h4 style="font-family:var(--fd);font-size:.9rem;color:var(--accent)">Recent Activity Log</h4>
+        <button onclick="clearAuditLog()" class="btn btn-secondary btn-sm" style="padding:.25rem .6rem;font-size:.6rem">Clear Logs</button>
+      </div>
+      <div id="auditLogList" class="audit-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" onclick="closeSecurityModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: DELETE CONFIRMATION                                     -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="deleteModal" class="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width:440px">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color:var(--danger)">Confirm Deletion</h3>
+      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:2rem 1.5rem">
+      <div style="font-size:2.5rem;margin-bottom:1rem">🗑</div>
+      <p style="font-size:.9rem;margin-bottom:.5rem">Are you sure you want to remove:</p>
+      <h4 id="deleteTargetTitle" style="font-family:var(--fd);color:var(--accent);margin-bottom:1rem"></h4>
+      <p style="font-size:.78rem;color:var(--muted)">This will remove the project from your live portfolio immediately.</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;gap:1rem">
+      <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- MODAL: DELETE BRANDING CONFIRMATION                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="deleteBrandingModal" class="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width:440px">
+    <div class="modal-header">
+      <h3 class="modal-title" style="color:var(--danger)">Confirm Deletion</h3>
+      <button class="modal-close" onclick="closeDeleteBrandingModal()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:2rem 1.5rem">
+      <div style="font-size:2.5rem;margin-bottom:1rem">🗑</div>
+      <p style="font-size:.9rem;margin-bottom:.5rem">Are you sure you want to remove:</p>
+      <h4 id="deleteBrandingTargetTitle" style="font-family:var(--fd);color:var(--accent);margin-bottom:1rem"></h4>
+      <p style="font-size:.78rem;color:var(--muted)">This will remove the branding showcase from your live portfolio immediately.</p>
+    </div>
+    <div class="modal-footer" style="justify-content:center;gap:1rem">
+      <button type="button" class="btn btn-secondary" onclick="closeDeleteBrandingModal()">Cancel</button>
+      <button type="button" id="confirmDeleteBrandingBtn" class="btn btn-danger">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- TOAST NOTIFICATION CONTAINER                                   -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPT: APPLICATION LOGIC & OWASP SECURITY CONTROLS            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+/* ── ANTI-CLICKJACKING FRAMEBUSTING (OWASP A05) ── */
+if (window.top !== window.self) {
+  window.top.location = window.self.location;
+}
+
+/* ── CONSTANTS & STORAGE KEYS ── */
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? (window.location.port === '5000' ? '' : 'http://localhost:5000')
+  : (window.location.protocol === 'file:' ? 'http://localhost:5000' : '');
+
+const STORAGE_PROJECTS_KEY = 'dj_portfolio_projects';
+const STORAGE_BRANDINGS_KEY = 'dj_portfolio_brandings';
+const STORAGE_AUDIT_KEY = 'dj_admin_audit_log';
+const SESSION_STORAGE_KEY = 'dj_admin_session';
+
+/* Default 12 projects from existing portfolio */
+const DEFAULT_PROJECTS = [
+  { id: 'cr7',     title: 'CR7 — Cristiano Ronaldo', img: 'https://heartydj.github.io/freelancer-portfolio/CR7.jpg', category: 'sports', tags: ['Sports', 'Poster Design'], row: 1 },
+  { id: 'ferrari', title: 'LaFerrari — Hypercar',     img: 'FERRARI.png',                                            category: 'auto',   tags: ['Auto', 'Hypercar', 'Poster'], row: 1 },
+  { id: 'lh44',    title: 'LH44 — Lewis Hamilton',   img: 'https://heartydj.github.io/freelancer-portfolio/LH44.jpg',category: 'sports', tags: ['Sports', 'F1', 'Poster'], row: 1 },
+  { id: 'bmw',     title: 'BMW M4 — Automotive Art',  img: 'https://heartydj.github.io/freelancer-portfolio/BMW%20M4.jpg', category: 'auto', tags: ['Auto', 'Visual Design'], row: 1 },
+  { id: 'vini',    title: 'Vinicius Jr. — No.7',      img: 'VINI.png',                                               category: 'sports', tags: ['Sports', 'Football', 'Poster'], row: 1 },
+  { id: 'lambo',   title: 'Lamborghini — Supercar',   img: 'https://heartydj.github.io/freelancer-portfolio/Lamborghini.jpg', category: 'auto', tags: ['Auto', 'Luxury'], row: 1 },
+  { id: 'gt3',     title: 'Porsche GT3 RS',           img: 'https://heartydj.github.io/freelancer-portfolio/GT3%20RS.jpg', category: 'auto', tags: ['Auto', 'Visual Design'], row: 2 },
+  { id: 'lm10',    title: 'LM10 — Lionel Messi',     img: 'https://heartydj.github.io/freelancer-portfolio/LM10.jpg',category: 'sports', tags: ['Sports', 'Poster Design'], row: 2 },
+  { id: 'ford',    title: 'Ford Mustang GT500',        img: 'FORD.png',                                               category: 'auto',   tags: ['Auto', 'Muscle Car', 'Poster'], row: 2 },
+  { id: 'njr',     title: 'NJR — Neymar Jr',          img: 'https://heartydj.github.io/freelancer-portfolio/NJR.jpg', category: 'sports', tags: ['Sports', 'Poster Design'], row: 2 },
+  { id: 'srt',     title: 'Dodge SRT — Muscle Car',   img: 'https://heartydj.github.io/freelancer-portfolio/SRT.png', category: 'auto',   tags: ['Auto', 'Visual Design'], row: 2 },
+  { id: 'ly',      title: 'LY — Lamine Yamal',        img: 'https://heartydj.github.io/freelancer-portfolio/LY.png',  category: 'sports', tags: ['Sports', 'Poster Design'], row: 2 },
+];
+
+/* Default 4 branding works */
+const DEFAULT_BRANDINGS = [
+  { id: 'uzhavan', title: 'Uzhavan', category: 'Retail · Logo Design', img: 'U.png', behanceUrl: 'https://www.behance.net/gallery/253043531/Uzhavan', order: 1 },
+  { id: 'quickpath', title: 'QuickPath', category: 'Tech · Logo Design', img: 'https://heartydj.github.io/freelancer-portfolio/QP.png', behanceUrl: 'https://www.behance.net/gallery/249301889/QuickpathLogo-design', order: 2 },
+  { id: 'kriscol', title: 'Kriscol Roofing', category: 'Roofing · Full Identity', img: 'https://heartydj.github.io/freelancer-portfolio/kriscol.png', behanceUrl: 'https://www.behance.net/gallery/246996937/Kriscol', order: 3 },
+  { id: 'keshri', title: 'Keshri Academy', category: 'Education · Brand Identity', img: 'https://heartydj.github.io/freelancer-portfolio/keshri.png', behanceUrl: 'https://www.behance.net/gallery/247231533/KESHRI-ACADEMY', order: 4 },
+];
+
+/* ── STATE ── */
+let projects = [];
+let brandings = [];
+let deleteTargetIndex = -1;
+let deleteBrandingTargetIndex = -1;
+let activeAdminSection = 'projects';
+let sessionCheckInterval = null;
+
+/* ══════════════════════════════════════════════════════════════ */
+/* CRYPTOGRAPHY & SECURITY HELPERS (OWASP A02 & A03)              */
+/* ══════════════════════════════════════════════════════════════ */
+
+// Generate cryptographically secure random hex string
+function generateSecureToken(byteLength = 32) {
+  const bytes = new Uint8Array(byteLength);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Strict HTML Entity Escaping (OWASP A03 XSS Prevention)
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Strict URL Sanitization (Block javascript:, data:text, etc.)
+function sanitizeUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  // Safe protocols: https, http
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  // Safe Base64 image data URIs
+  if (/^data:image\/(png|jpeg|jpg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/=]+$/i.test(trimmed)) return trimmed;
+  // Safe relative paths (e.g. CR7.jpg, images/foo.png)
+  if (/^[a-zA-Z0-9_\- %20\.]+\.(jpg|jpeg|png|webp|gif|svg)$/i.test(trimmed)) return trimmed;
+  return '';
+}
+
+// Audit logger helper
+function logAuditEvent(action, type = 'crud') {
+  try {
+    const raw = localStorage.getItem(STORAGE_AUDIT_KEY);
+    const logs = raw ? JSON.parse(raw) : [];
+    logs.unshift({
+      time: new Date().toISOString(),
+      action: String(action),
+      type: type
+    });
+    // Keep last 50 entries
+    if (logs.length > 50) logs.pop();
+    localStorage.setItem(STORAGE_AUDIT_KEY, JSON.stringify(logs));
+  } catch(e) {}
+}
+
+// Retrieve active session token
+function getAuthToken() {
+  try {
+    const sessionRaw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+    if (!sessionRaw) return '';
+    const sess = JSON.parse(sessionRaw);
+    return sess?.token || '';
+  } catch(e) {
+    return '';
+  }
+}
+
+// Live MongoDB connection health check
+async function checkDbStatus(showToastMsg = false) {
+  const dot = document.getElementById('dbStatusDot');
+  const text = document.getElementById('dbStatusText');
+  const statDb = document.getElementById('statDbStatus');
+  const statDetails = document.getElementById('statDbDetails');
+  try {
+    const res = await fetch(`${API_BASE}/api/status`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.database === 'connected') {
+        if (dot) dot.style.background = 'var(--accent)';
+        if (text) text.textContent = 'MongoDB: Connected';
+        if (statDb) { statDb.textContent = 'MongoDB'; statDb.style.color = 'var(--accent)'; }
+        if (statDetails) statDetails.textContent = 'Connected & Synced';
+        if (showToastMsg) showToast('MongoDB is connected and operational.', 'success');
+        return true;
+      }
+    }
+  } catch(e) {}
+
+  if (dot) dot.style.background = 'var(--danger)';
+  if (text) text.textContent = 'MongoDB: Offline';
+  if (statDb) { statDb.textContent = 'DB Offline'; statDb.style.color = 'var(--danger)'; }
+  if (statDetails) statDetails.textContent = 'Check .env / MongoDB';
+  if (showToastMsg) showToast('MongoDB is disconnected. Ensure MongoDB is running and MONGODB_URI is set in .env', 'error');
+  return false;
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* INITIALIZATION & AUTHENTICATION (MONGODB & OWASP HARDENED)     */
+/* ══════════════════════════════════════════════════════════════ */
+
+async function initSecurity() {
+  checkDbStatus();
+  checkSessionState();
+}
+
+/* Check active session on load or refresh without resetting timer */
+function checkSessionState() {
+  const sessionRaw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+  if (sessionRaw) {
+    try {
+      const sess = JSON.parse(sessionRaw);
+      const now = Date.now();
+      // Verify session has not expired; DO NOT reset expiresAt so countdown continues across refreshes
+      if (sess.token && sess.expiresAt && (sess.expiresAt - now > 0)) {
+        showAdminView();
+        return;
+      }
+    } catch(e) {}
+  }
+  showLoginView();
+}
+
+function showLoginView() {
+  document.getElementById('loginView').style.display = 'flex';
+  document.getElementById('adminView').style.display = 'none';
+  if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+}
+
+function showAdminView() {
+  document.getElementById('loginView').style.display = 'none';
+  document.getElementById('adminView').style.display = 'flex';
+  checkDbStatus();
+  loadProjects();
+  loadBrandings();
+  startSessionWatcher();
+  window.addEventListener('storage', handleCrossTabSync);
+}
+
+/* Login handler: authenticates against MongoDB backend (Unlimited attempts permitted) */
+async function handleLogin(e) {
+  e.preventDefault();
+  const errorEl = document.getElementById('loginError');
+  const submitBtn = document.getElementById('loginSubmitBtn');
+  errorEl.style.display = 'none';
+
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+
+  if (!user || !pass) {
+    errorEl.textContent = 'Please enter both username and password.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Verifying with MongoDB...';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error || 'Invalid username or password.';
+      errorEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Unlock Studio ↗';
+      return;
+    }
+
+    // Success! Store session with fixed expiresAt so countdown continues across page reloads
+    const session = {
+      token: data.token,
+      expiresAt: data.expiresAt || (Date.now() + 30 * 60 * 1000),
+      user: data.user?.username || user,
+      loginTime: Date.now()
+    };
+    sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+    logAuditEvent(`User '${session.user}' logged in via MongoDB`, 'auth');
+    showToast('Welcome to DJ Admin Studio!', 'success');
+    showAdminView();
+  } catch(err) {
+    errorEl.textContent = 'Cannot connect to backend server. Make sure the server is running on port 5000.';
+    errorEl.style.display = 'block';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Unlock Studio ↗';
+  }
+}
+
+function handleLogout() {
+  sessionStorage.removeItem(SESSION_STORAGE_KEY);
+  logAuditEvent('Admin session logged out', 'auth');
+  showToast('Logged out securely.', 'info');
+  showLoginView();
+}
+
+/* Session countdown timer: continues seamlessly across page refreshes */
+function startSessionWatcher() {
+  if (sessionCheckInterval) clearInterval(sessionCheckInterval);
+
+  const updateCountdown = () => {
+    try {
+      const sessionRaw = sessionStorage.getItem(SESSION_STORAGE_KEY);
+      if (!sessionRaw) {
+        handleLogout();
+        return;
+      }
+      const sess = JSON.parse(sessionRaw);
+      const now = Date.now();
+      const remaining = sess.expiresAt - now;
+
+      if (remaining <= 0) {
+        showToast('Session expired. Please log in again.', 'info');
+        handleLogout();
+        return;
+      }
+
+      // Display formatted countdown mm:ss
+      const totalSec = Math.floor(remaining / 1000);
+      const m = Math.floor(totalSec / 60);
+      const s = totalSec % 60;
+      const timerEl = document.getElementById('sessionTimer');
+      if (timerEl) {
+        timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+    } catch(e) {
+      handleLogout();
+    }
+  };
+
+  updateCountdown(); // Update immediately on start/refresh
+  sessionCheckInterval = setInterval(updateCountdown, 1000);
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* PROJECT CRUD OPERATIONS (ADD, EDIT, DELETE, REORDER)          */
+/* ══════════════════════════════════════════════════════════════ */
+
+async function loadProjects() {
+  try {
+    const res = await fetch(`${API_BASE}/api/projects`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        projects = data;
+        localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+        renderProjects();
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('API fetch failed, reading from local cache:', err);
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_PROJECTS_KEY);
+    if (!raw) {
+      projects = [...DEFAULT_PROJECTS];
+      saveProjectsToStorage();
+    } else {
+      const parsed = JSON.parse(raw);
+      projects = (Array.isArray(parsed) && parsed.length > 0) ? parsed : [...DEFAULT_PROJECTS];
+    }
+  } catch(e) {
+    projects = [...DEFAULT_PROJECTS];
+  }
+  renderProjects();
+}
+
+function saveProjectsToStorage() {
+  try {
+    localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+    updateStorageMeter();
+    return true;
+  } catch(e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22) {
+      showToast('Storage quota exceeded! Please use image URLs rather than large file uploads.', 'error');
+    } else {
+      showToast('Failed to save projects to storage.', 'error');
+    }
+    return false;
+  }
+}
+
+function renderProjects() {
+  const grid = document.getElementById('projectsGrid');
+  const catSelect = document.getElementById('categoryFilter');
+  const searchVal = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+  const catVal = catSelect.value || 'all';
+  const sortVal = document.getElementById('sortSelect').value;
+
+  // Extract categories for filter dropdown & datalist
+  const categories = new Set();
+  projects.forEach(p => { if (p.category) categories.add(p.category.trim()); });
+  
+  // Rebuild category filter options
+  const curCat = catSelect.value;
+  catSelect.innerHTML = '<option value="all">All Categories</option>';
+  categories.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.toLowerCase();
+    opt.textContent = c;
+    if (opt.value === curCat) opt.selected = true;
+    catSelect.appendChild(opt);
+  });
+
+  // Filter projects
+  let list = projects.map((p, idx) => ({ ...p, originalIndex: idx }));
+
+  if (catVal !== 'all') {
+    list = list.filter(p => (p.category || '').toLowerCase() === catVal.toLowerCase());
+  }
+
+  if (searchVal) {
+    list = list.filter(p => {
+      const t = (p.title || '').toLowerCase();
+      const c = (p.category || '').toLowerCase();
+      const tags = (Array.isArray(p.tags) ? p.tags.join(' ') : String(p.tags)).toLowerCase();
+      return t.includes(searchVal) || c.includes(searchVal) || tags.includes(searchVal);
+    });
+  }
+
+  // Sort
+  if (sortVal === 'az') {
+    list.sort((a,b) => (a.title || '').localeCompare(b.title || ''));
+  } else if (sortVal === 'za') {
+    list.sort((a,b) => (b.title || '').localeCompare(a.title || ''));
+  }
+
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>No projects match your filter</h3>
+        <p>Try searching for a different keyword or create a new design project.</p>
+        <button onclick="openProjectModal()" class="btn btn-primary">+ Add New Project</button>
+      </div>
+    `;
+  } else {
+    list.forEach(p => {
+      const card = createProjectCard(p);
+      grid.appendChild(card);
+    });
+  }
+
+  // Update header stats
+  document.getElementById('statProjects').textContent = projects.length;
+  const tabProjectsBadge = document.getElementById('tabProjectsBadge');
+  if (tabProjectsBadge) tabProjectsBadge.textContent = projects.length;
+  document.getElementById('statCategories').textContent = categories.size;
+  updateStorageMeter();
+}
+
+function createProjectCard(p) {
+  const card = document.createElement('div');
+  card.className = 'prj-card';
+
+  const thumb = document.createElement('div');
+  thumb.className = 'prj-card-thumb';
+
+  const img = document.createElement('img');
+  img.src = sanitizeUrl(p.img) || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150" fill="%231a1a1a"><rect width="200" height="150"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">Image Not Found</text></svg>';
+  img.alt = escapeHTML(p.title);
+  img.loading = 'lazy';
+  img.onerror = function() {
+    this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150" fill="%231a1a1a"><rect width="200" height="150"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23ff5252" font-size="12">Image Failed to Load</text></svg>';
+  };
+
+  const badges = document.createElement('div');
+  badges.className = 'prj-card-badges';
+
+  const catBadge = document.createElement('span');
+  catBadge.className = 'badge-cat';
+  catBadge.textContent = (p.category || 'WORK').toUpperCase();
+
+  const rowBadge = document.createElement('span');
+  rowBadge.className = 'badge-row';
+  rowBadge.textContent = p.row ? `Row ${p.row}` : 'Auto';
+
+  badges.appendChild(catBadge);
+  badges.appendChild(rowBadge);
+  thumb.appendChild(img);
+  thumb.appendChild(badges);
+
+  const body = document.createElement('div');
+  body.className = 'prj-card-body';
+
+  const topInfo = document.createElement('div');
+  const title = document.createElement('h4');
+  title.className = 'prj-card-title';
+  title.textContent = p.title || 'Untitled';
+
+  const tagsContainer = document.createElement('div');
+  tagsContainer.className = 'prj-card-tags';
+  const tagList = Array.isArray(p.tags) ? p.tags : (p.tags ? p.tags.split(',') : []);
+  tagList.forEach(t => {
+    const pill = document.createElement('span');
+    pill.className = 'prj-tag-pill';
+    pill.textContent = t.trim();
+    tagsContainer.appendChild(pill);
+  });
+
+  topInfo.appendChild(title);
+  topInfo.appendChild(tagsContainer);
+
+  const actions = document.createElement('div');
+  actions.className = 'prj-card-actions';
+
+  const leftBtns = document.createElement('div');
+  leftBtns.style.display = 'flex';
+  leftBtns.style.gap = '.4rem';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-secondary btn-sm';
+  editBtn.textContent = 'Edit';
+  editBtn.onclick = () => openEditModal(p.originalIndex);
+
+  const dupBtn = document.createElement('button');
+  dupBtn.className = 'btn btn-secondary btn-sm';
+  dupBtn.textContent = 'Copy';
+  dupBtn.title = 'Duplicate Project';
+  dupBtn.onclick = () => duplicateProject(p.originalIndex);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-danger btn-sm';
+  delBtn.textContent = '✕';
+  delBtn.title = 'Delete Project';
+  delBtn.onclick = () => openDeleteModal(p.originalIndex);
+
+  leftBtns.appendChild(editBtn);
+  leftBtns.appendChild(dupBtn);
+  leftBtns.appendChild(delBtn);
+
+  const reorderBtns = document.createElement('div');
+  reorderBtns.className = 'prj-card-reorder';
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'btn btn-secondary btn-sm btn-icon';
+  upBtn.textContent = '↑';
+  upBtn.title = 'Move Earlier in List';
+  upBtn.onclick = () => moveProject(p.originalIndex, -1);
+  if (p.originalIndex === 0) upBtn.disabled = true;
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'btn btn-secondary btn-sm btn-icon';
+  downBtn.textContent = '↓';
+  downBtn.title = 'Move Later in List';
+  downBtn.onclick = () => moveProject(p.originalIndex, 1);
+  if (p.originalIndex === projects.length - 1) downBtn.disabled = true;
+
+  reorderBtns.appendChild(upBtn);
+  reorderBtns.appendChild(downBtn);
+
+  actions.appendChild(leftBtns);
+  actions.appendChild(reorderBtns);
+
+  body.appendChild(topInfo);
+  body.appendChild(actions);
+
+  card.appendChild(thumb);
+  card.appendChild(body);
+
+  return card;
+}
+
+function filterProjects() {
+  renderProjects();
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* MODAL: ADD / EDIT PROJECT HANDLERS                             */
+/* ══════════════════════════════════════════════════════════════ */
+
+function openProjectModal() {
+  switchAdminSection('projects');
+  document.getElementById('editIndex').value = '-1';
+  document.getElementById('prjModalTitle').textContent = 'Add New Project';
+  document.getElementById('saveProjectBtn').textContent = 'Create Project';
+  document.getElementById('projectForm').reset();
+  document.getElementById('prjImgDataUrl').value = '';
+  document.getElementById('dropzoneTxt').textContent = 'Click or Drag & Drop Image Here';
+  switchImgTab('url');
+  updateModalPreview();
+  document.getElementById('projectModal').classList.add('open');
+}
+
+function openEditModal(index) {
+  if (index < 0 || index >= projects.length) return;
+  const p = projects[index];
+  document.getElementById('editIndex').value = index;
+  document.getElementById('prjModalTitle').textContent = 'Edit Project';
+  document.getElementById('saveProjectBtn').textContent = 'Update Project';
+
+  document.getElementById('prjTitle').value = p.title || '';
+  document.getElementById('prjSlug').value = p.id || '';
+  document.getElementById('prjCat').value = p.category || '';
+  document.getElementById('prjRow').value = p.row ? String(p.row) : 'auto';
+  document.getElementById('prjTags').value = Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags || '');
+  document.getElementById('prjLink').value = p.externalUrl || '';
+
+  const imgVal = p.img || '';
+  if (imgVal.startsWith('data:image')) {
+    switchImgTab('upload');
+    document.getElementById('prjImgDataUrl').value = imgVal;
+    document.getElementById('prjImgUrl').value = '';
+    document.getElementById('dropzoneTxt').textContent = 'Uploaded Image Present (Click to replace)';
+  } else {
+    switchImgTab('url');
+    document.getElementById('prjImgUrl').value = imgVal;
+    document.getElementById('prjImgDataUrl').value = '';
+  }
+
+  updateModalPreview();
+  document.getElementById('projectModal').classList.add('open');
+}
+
+function closeProjectModal() {
+  document.getElementById('projectModal').classList.remove('open');
+}
+
+function switchImgTab(tab) {
+  const urlSec = document.getElementById('imgUrlSection');
+  const upSec = document.getElementById('imgUploadSection');
+  const btnUrl = document.getElementById('tabBtnUrl');
+  const btnUp = document.getElementById('tabBtnUpload');
+
+  if (tab === 'url') {
+    urlSec.style.display = 'block';
+    upSec.style.display = 'none';
+    btnUrl.classList.add('active');
+    btnUp.classList.remove('active');
+  } else {
+    urlSec.style.display = 'none';
+    upSec.style.display = 'block';
+    btnUrl.classList.remove('active');
+    btnUp.classList.add('active');
+  }
+  updateModalPreview();
+}
+
+/* File Upload with Drag & Drop and OWASP Type/Size Validation */
+function handleFileUpload(e) {
+  const file = e.target.files[0];
+  processImageFile(file);
+}
+
+function processImageFile(file) {
+  if (!file) return;
+
+  // Strict MIME type validation (OWASP A04)
+  const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+  if (!allowedMime.includes(file.type)) {
+    showToast('Invalid file type! Only JPG, PNG, WEBP, and SVG are supported.', 'error');
+    return;
+  }
+
+  // Size limit: 2.5MB
+  const maxBytes = 2.5 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    showToast('File too large! Max file size allowed is 2.5MB to avoid storage overflow.', 'error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const dataUrl = evt.target.result;
+    document.getElementById('prjImgDataUrl').value = dataUrl;
+    document.getElementById('dropzoneTxt').textContent = `Uploaded: ${file.name} (${Math.round(file.size/1024)} KB)`;
+    updateModalPreview();
+    showToast('Image uploaded successfully.', 'success');
+  };
+  reader.onerror = function() {
+    showToast('Error reading image file.', 'error');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag & drop support
+const dropzone = document.getElementById('imgDropzone');
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => { dropzone.classList.remove('dragover'); });
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    processImageFile(e.dataTransfer.files[0]);
+  }
+});
+
+function updateModalPreview() {
+  const title = document.getElementById('prjTitle').value.trim() || 'Project Title';
+  const cat = document.getElementById('prjCat').value.trim() || 'CATEGORY';
+  const urlVal = document.getElementById('prjImgUrl').value.trim();
+  const dataVal = document.getElementById('prjImgDataUrl').value.trim();
+  const activeTab = document.getElementById('tabBtnUrl').classList.contains('active') ? 'url' : 'upload';
+
+  const imgSrc = (activeTab === 'url' ? sanitizeUrl(urlVal) : dataVal) || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="266" fill="%23141414"><rect width="200" height="266"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="14">No Image</text></svg>';
+
+  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewTag').textContent = cat.toUpperCase();
+  document.getElementById('previewImg').src = imgSrc;
+  document.getElementById('titleCharCount').textContent = `${title.length}/100`;
+
+  // Auto generate slug if adding new
+  const editIdx = parseInt(document.getElementById('editIndex').value, 10);
+  const slugInput = document.getElementById('prjSlug');
+  if (editIdx === -1 && document.activeElement === document.getElementById('prjTitle')) {
+    slugInput.value = title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+  }
+}
+
+/* Save / Update Project */
+async function handleSaveProject(e) {
+  e.preventDefault();
+  const editIdx = parseInt(document.getElementById('editIndex').value, 10);
+  const title = document.getElementById('prjTitle').value.trim();
+  let slug = document.getElementById('prjSlug').value.trim().toLowerCase().replace(/[^a-z0-9_\-]+/g, '-');
+  const category = document.getElementById('prjCat').value.trim();
+  const rowVal = document.getElementById('prjRow').value;
+  const tagsStr = document.getElementById('prjTags').value.trim();
+  const link = sanitizeUrl(document.getElementById('prjLink').value.trim());
+
+  const activeTab = document.getElementById('tabBtnUrl').classList.contains('active') ? 'url' : 'upload';
+  let image = activeTab === 'url' ? document.getElementById('prjImgUrl').value.trim() : document.getElementById('prjImgDataUrl').value.trim();
+
+  // Validate inputs
+  if (!title || title.length < 2) {
+    showToast('Project title must be at least 2 characters long.', 'error');
+    return;
+  }
+  if (!slug) slug = 'project-' + Date.now();
+  if (!image) {
+    showToast('Please provide an image URL or upload an image file.', 'error');
+    return;
+  }
+
+  // Ensure unique slug
+  const duplicate = projects.find((p, idx) => p.id === slug && idx !== editIdx);
+  if (duplicate) {
+    slug = slug + '-' + Math.floor(Math.random() * 900 + 100);
+  }
+
+  // Parse tags
+  const tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
+
+  const row = rowVal === 'auto' ? (editIdx >= 0 ? projects[editIdx].row || 1 : (projects.length % 2 === 0 ? 1 : 2)) : parseInt(rowVal, 10);
+
+  const payload = {
+    id: slug,
+    title: title,
+    category: category || 'General',
+    tags: tags.length ? tags : ['Design'],
+    img: image,
+    row: row,
+    externalUrl: link
+  };
+
+  const saveBtn = document.getElementById('saveProjectBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving to MongoDB...';
+  const token = getAuthToken();
+
+  try {
+    let res;
+    if (editIdx >= 0) {
+      const existing = projects[editIdx];
+      const targetId = existing.id || existing._id;
+      res = await fetch(`${API_BASE}/api/projects/${targetId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+    } else {
+      res = await fetch(`${API_BASE}/api/projects`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    if (res.ok) {
+      const savedDoc = await res.json();
+      if (editIdx >= 0) {
+        projects[editIdx] = savedDoc;
+        logAuditEvent(`Updated project '${title}' in MongoDB`, 'crud');
+        showToast(`Project '${title}' updated in MongoDB!`, 'success');
+      } else {
+        projects.push(savedDoc);
+        logAuditEvent(`Created new project '${title}' in MongoDB`, 'crud');
+        showToast(`Project '${title}' saved to MongoDB!`, 'success');
+      }
+      localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+      closeProjectModal();
+      renderProjects();
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      showToast(errData.error || 'Failed to save project to MongoDB.', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while saving project to MongoDB.', 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = editIdx >= 0 ? 'Update Project' : 'Create Project';
+  }
+}
+
+/* Duplicate Project */
+async function duplicateProject(index) {
+  if (index < 0 || index >= projects.length) return;
+  const original = projects[index];
+  const token = getAuthToken();
+
+  const payload = {
+    id: `${original.id}-copy-${Date.now().toString().slice(-4)}`,
+    title: `${original.title} (Copy)`,
+    category: original.category,
+    tags: original.tags,
+    img: original.img,
+    row: original.row,
+    externalUrl: original.externalUrl
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/projects`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const saved = await res.json();
+      projects.splice(index + 1, 0, saved);
+      localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+      renderProjects();
+      logAuditEvent(`Duplicated project '${original.title}' in MongoDB`, 'crud');
+      showToast(`Duplicated '${original.title}' in MongoDB.`, 'success');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || 'Failed to duplicate project in MongoDB.', 'error');
+    }
+  } catch(e) {
+    showToast('Network error duplicating project.', 'error');
+  }
+}
+
+/* Move Project sequence */
+async function moveProject(index, direction) {
+  const target = index + direction;
+  if (target < 0 || target >= projects.length) return;
+  const temp = projects[index];
+  projects[index] = projects[target];
+  projects[target] = temp;
+
+  // Update order in memory & cache
+  localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+  renderProjects();
+
+  // Sync updated sequence orders to MongoDB if online
+  const token = getAuthToken();
+  if (token) {
+    try {
+      const p1 = projects[index];
+      const p2 = projects[target];
+      if (p1 && p1.id) {
+        fetch(`${API_BASE}/api/projects/${p1.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ order: index + 1 })
+        }).catch(() => {});
+      }
+      if (p2 && p2.id) {
+        fetch(`${API_BASE}/api/projects/${p2.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ order: target + 1 })
+        }).catch(() => {});
+      }
+    } catch(e) {}
+  }
+}
+
+/* Delete Project Modal */
+function openDeleteModal(index) {
+  if (index < 0 || index >= projects.length) return;
+  deleteTargetIndex = index;
+  document.getElementById('deleteTargetTitle').textContent = `"${projects[index].title}"`;
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  deleteTargetIndex = -1;
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+  if (deleteTargetIndex < 0 || deleteTargetIndex >= projects.length) return;
+  const target = projects[deleteTargetIndex];
+  const targetId = target.id || target._id;
+  const token = getAuthToken();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/projects/${targetId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      projects.splice(deleteTargetIndex, 1);
+      localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+      closeDeleteModal();
+      renderProjects();
+      logAuditEvent(`Deleted project '${target.title}' from MongoDB`, 'crud');
+      showToast(`Project '${target.title}' deleted from MongoDB.`, 'info');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || 'Failed to delete project from MongoDB.', 'error');
+    }
+  } catch(err) {
+    showToast('Network error while deleting project.', 'error');
+  }
+});
+
+/* Reset to Default Projects in MongoDB */
+async function confirmResetDefaults() {
+  if (confirm('Are you sure you want to reset all projects in MongoDB to the original 12 portfolio designs?')) {
+    const token = getAuthToken();
+    try {
+      const res = await fetch(`${API_BASE}/api/projects/reset`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        projects = data.projects || DEFAULT_PROJECTS;
+        localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+        renderProjects();
+        logAuditEvent('Reset MongoDB projects to original 12 designs', 'crud');
+        showToast('Reset MongoDB to default 12 designs.', 'success');
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.error || 'Failed to reset projects in MongoDB.', 'error');
+      }
+    } catch(err) {
+      showToast('Network error while resetting projects.', 'error');
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* IMPORT & EXPORT WITH STRICT SCHEMA VALIDATION (OWASP A04 & A08)*/
+/* ══════════════════════════════════════════════════════════════ */
+
+function exportProjectsJSON() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `dj-portfolio-backup-${new Date().toISOString().slice(0,10)}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  logAuditEvent('Exported projects JSON backup', 'crud');
+  showToast('Project backup downloaded.', 'success');
+}
+
+function importProjectsJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    try {
+      const parsed = JSON.parse(evt.target.result);
+      // OWASP Schema Validation: Ensure array of valid objects
+      if (!Array.isArray(parsed)) {
+        throw new Error('Import data must be a JSON array of projects.');
+      }
+
+      const validated = [];
+      for (const item of parsed) {
+        if (!item || typeof item !== 'object') continue;
+        const title = typeof item.title === 'string' ? item.title.trim().slice(0, 100) : 'Untitled';
+        const id = typeof item.id === 'string' ? item.id.trim().slice(0, 50) : 'prj-' + Date.now();
+        const category = typeof item.category === 'string' ? item.category.trim().slice(0, 40) : 'Design';
+        const img = sanitizeUrl(item.img);
+        const tags = Array.isArray(item.tags) ? item.tags.map(t => String(t).slice(0, 30)) : ['Design'];
+        const row = item.row === 1 || item.row === 2 ? item.row : 1;
+        const externalUrl = sanitizeUrl(item.externalUrl);
+
+        if (title && (img || item.img)) {
+          validated.push({
+            id: id,
+            title: title,
+            category: category,
+            tags: tags,
+            img: img || item.img,
+            row: row,
+            externalUrl: externalUrl,
+            updatedAt: Date.now()
+          });
+        }
+      }
+
+      if (validated.length === 0) {
+        throw new Error('No valid project records found in uploaded file.');
+      }
+
+      if (confirm(`Successfully validated ${validated.length} project(s). Replace current projects with this backup?`)) {
+        projects = validated;
+        saveProjectsToStorage();
+        renderProjects();
+        logAuditEvent(`Imported ${validated.length} projects from backup file`, 'crud');
+        showToast(`Imported ${validated.length} projects successfully!`, 'success');
+      }
+    } catch(err) {
+      showToast('Import failed: ' + err.message, 'error');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* SECURITY MODAL: PASSWORD CHANGE & AUDIT LOG VIEWER             */
+/* ══════════════════════════════════════════════════════════════ */
+
+function openSecurityModal() {
+  renderAuditLogs();
+  document.getElementById('securityModal').classList.add('open');
+}
+
+function closeSecurityModal() {
+  document.getElementById('securityModal').classList.remove('open');
+}
+
+function checkPassStrength(val) {
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[a-z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const fill = document.getElementById('passStrengthFill');
+  const txt = document.getElementById('passStrengthTxt');
+
+  if (score <= 2) {
+    fill.style.width = '30%';
+    fill.style.background = 'var(--danger)';
+    txt.textContent = 'Weak password';
+  } else if (score <= 4) {
+    fill.style.width = '70%';
+    fill.style.background = 'var(--warning)';
+    txt.textContent = 'Moderate password';
+  } else {
+    fill.style.width = '100%';
+    fill.style.background = 'var(--success)';
+    txt.textContent = 'Strong password (OWASP Recommended)';
+  }
+}
+
+async function handleChangePassword(e) {
+  e.preventDefault();
+  const token = getAuthToken();
+  const curr = document.getElementById('currPass').value;
+  const newP = document.getElementById('newPass').value;
+  const conf = document.getElementById('confPass').value;
+
+  if (newP !== conf) {
+    showToast('New passwords do not match.', 'error');
+    return;
+  }
+
+  // OWASP Password Policy Enforcement
+  if (newP.length < 8) {
+    showToast('Password must contain at least 8 characters.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ currentPassword: curr, newPassword: newP })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      logAuditEvent('Admin password changed successfully in MongoDB', 'auth');
+      showToast('Password updated securely in MongoDB!', 'success');
+      document.getElementById('changePassForm').reset();
+      document.getElementById('passStrengthFill').style.width = '0';
+      closeSecurityModal();
+    } else {
+      showToast(data.error || 'Failed to change password in MongoDB.', 'error');
+    }
+  } catch(err) {
+    showToast('Network error while updating password.', 'error');
+  }
+}
+
+function renderAuditLogs() {
+  const container = document.getElementById('auditLogList');
+  try {
+    const raw = localStorage.getItem(STORAGE_AUDIT_KEY);
+    const logs = raw ? JSON.parse(raw) : [];
+    if (logs.length === 0) {
+      container.innerHTML = '<div style="color:var(--muted);font-size:.75rem;padding:.5rem">No security events logged yet.</div>';
+      return;
+    }
+    container.innerHTML = logs.map(l => `
+      <div class="audit-row">
+        <span class="audit-tag ${escapeHTML(l.type)}">${escapeHTML(l.type)}</span>
+        <span class="audit-msg">${escapeHTML(l.action)}</span>
+        <span class="audit-time">${escapeHTML(new Date(l.time).toLocaleTimeString())}</span>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '';
+  }
+}
+
+function clearAuditLog() {
+  localStorage.removeItem(STORAGE_AUDIT_KEY);
+  renderAuditLogs();
+  showToast('Audit logs cleared.', 'info');
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* STORAGE MONITOR & CROSS-TAB SYNC                               */
+/* ══════════════════════════════════════════════════════════════ */
+
+function updateStorageMeter() {
+  try {
+    const totalChars = Object.keys(localStorage).reduce((sum, key) => sum + (localStorage[key] || '').length, 0);
+    const approxKB = Math.round((totalChars * 2) / 1024);
+    const maxKB = 5120; // 5MB standard localStorage quota
+    const pct = Math.min(100, Math.round((approxKB / maxKB) * 100));
+
+    const statStorage = document.getElementById('statStorage');
+    const statStoragePct = document.getElementById('statStoragePct');
+    if (statStorage) statStorage.textContent = `${approxKB} KB`;
+    if (statStoragePct) statStoragePct.textContent = `${pct}% of 5MB quota`;
+  } catch(e) {}
+}
+
+function handleCrossTabSync(e) {
+  if (e.key === STORAGE_PROJECTS_KEY) {
+    loadProjects();
+    renderProjects();
+    showToast('Projects refreshed from another window.', 'info');
+  }
+  if (e.key === STORAGE_BRANDINGS_KEY) {
+    loadBrandings();
+    renderBrandings();
+    showToast('Branding works refreshed from another window.', 'info');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+/* BRANDING WORKS CRUD OPERATIONS (ADD, EDIT, DELETE, REORDER)    */
+/* ══════════════════════════════════════════════════════════════ */
+
+async function loadBrandings() {
+  try {
+    const res = await fetch(`${API_BASE}/api/branding`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        brandings = data;
+        localStorage.setItem(STORAGE_BRANDINGS_KEY, JSON.stringify(brandings));
+        renderBrandings();
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('API fetch failed, reading branding from local cache:', err);
+  }
+
+  try {
+    const raw = localStorage.getItem(STORAGE_BRANDINGS_KEY);
+    if (!raw) {
+      brandings = [...DEFAULT_BRANDINGS];
+      localStorage.setItem(STORAGE_BRANDINGS_KEY, JSON.stringify(brandings));
+    } else {
+      const parsed = JSON.parse(raw);
+      brandings = (Array.isArray(parsed) && parsed.length > 0) ? parsed : [...DEFAULT_BRANDINGS];
+    }
+  } catch(e) {
+    brandings = [...DEFAULT_BRANDINGS];
+  }
+  renderBrandings();
+}
+
+function renderBrandings() {
+  const grid = document.getElementById('brandingsGrid');
+  if (!grid) return;
+  const searchVal = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+
+  let list = brandings.map((b, idx) => ({ ...b, originalIndex: idx }));
+
+  if (searchVal && activeAdminSection === 'branding') {
+    list = list.filter(b => {
+      const t = (b.title || '').toLowerCase();
+      const c = (b.category || '').toLowerCase();
+      return t.includes(searchVal) || c.includes(searchVal);
+    });
+  }
+
+  grid.innerHTML = '';
+
+  if (list.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>No branding showcases found</h3>
+        <p>Add your first branding identity project to display in the Branding Work section.</p>
+        <button onclick="openBrandingModal()" class="btn btn-primary">+ Add new Branding work</button>
+      </div>
+    `;
+  } else {
+    list.forEach(b => {
+      const card = createBrandingCard(b);
+      grid.appendChild(card);
+    });
+  }
+
+  const statEl = document.getElementById('statBrandings');
+  if (statEl) statEl.textContent = brandings.length;
+  const badgeEl = document.getElementById('tabBrandingBadge');
+  if (badgeEl) badgeEl.textContent = brandings.length;
+}
+
+function createBrandingCard(b) {
+  const card = document.createElement('div');
+  card.className = 'prj-card';
+
+  const thumb = document.createElement('div');
+  thumb.className = 'prj-card-thumb';
+
+  const img = document.createElement('img');
+  img.src = sanitizeUrl(b.img) || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150" fill="%231a1a1a"><rect width="200" height="150"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">Image Not Found</text></svg>';
+  img.alt = escapeHTML(b.title);
+  img.loading = 'lazy';
+  img.onerror = function() {
+    this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="150" fill="%231a1a1a"><rect width="200" height="150"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23ff5252" font-size="12">Image Failed to Load</text></svg>';
+  };
+
+  const badges = document.createElement('div');
+  badges.className = 'prj-card-badges';
+
+  const catBadge = document.createElement('span');
+  catBadge.className = 'badge-cat';
+  catBadge.textContent = (b.category || 'BRANDING').toUpperCase();
+
+  const beBadge = document.createElement('span');
+  beBadge.className = 'badge-row';
+  beBadge.style.color = 'var(--accent)';
+  beBadge.style.borderColor = 'rgba(201,255,87,.3)';
+  beBadge.textContent = 'Behance';
+
+  badges.appendChild(catBadge);
+  badges.appendChild(beBadge);
+  thumb.appendChild(img);
+  thumb.appendChild(badges);
+
+  const body = document.createElement('div');
+  body.className = 'prj-card-body';
+
+  const topInfo = document.createElement('div');
+  const title = document.createElement('h4');
+  title.className = 'prj-card-title';
+  title.textContent = b.title || 'Untitled Branding';
+
+  const sub = document.createElement('div');
+  sub.style.fontSize = '.75rem';
+  sub.style.color = 'var(--muted)';
+  sub.style.marginBottom = '1.2rem';
+  sub.textContent = b.category || 'Brand Identity';
+
+  topInfo.appendChild(title);
+  topInfo.appendChild(sub);
+
+  const actions = document.createElement('div');
+  actions.className = 'prj-card-actions';
+
+  const leftBtns = document.createElement('div');
+  leftBtns.style.display = 'flex';
+  leftBtns.style.gap = '.4rem';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'btn btn-secondary btn-sm';
+  editBtn.textContent = 'Edit';
+  editBtn.onclick = () => openEditBrandingModal(b.originalIndex);
+
+  const viewBtn = document.createElement('a');
+  viewBtn.className = 'btn btn-secondary btn-sm';
+  viewBtn.href = sanitizeUrl(b.behanceUrl) || '#';
+  viewBtn.target = '_blank';
+  viewBtn.rel = 'noopener';
+  viewBtn.textContent = 'Behance ↗';
+  viewBtn.title = 'Open Behance Showcase';
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-danger btn-sm';
+  delBtn.textContent = '✕';
+  delBtn.title = 'Delete Branding Work';
+  delBtn.onclick = () => openDeleteBrandingModal(b.originalIndex);
+
+  leftBtns.appendChild(editBtn);
+  leftBtns.appendChild(viewBtn);
+  leftBtns.appendChild(delBtn);
+
+  const reorderBtns = document.createElement('div');
+  reorderBtns.className = 'prj-card-reorder';
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'btn btn-secondary btn-sm btn-icon';
+  upBtn.textContent = '↑';
+  upBtn.title = 'Move Earlier';
+  upBtn.onclick = () => moveBranding(b.originalIndex, -1);
+  if (b.originalIndex === 0) upBtn.disabled = true;
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'btn btn-secondary btn-sm btn-icon';
+  downBtn.textContent = '↓';
+  downBtn.title = 'Move Later';
+  downBtn.onclick = () => moveBranding(b.originalIndex, 1);
+  if (b.originalIndex === brandings.length - 1) downBtn.disabled = true;
+
+  reorderBtns.appendChild(upBtn);
+  reorderBtns.appendChild(downBtn);
+
+  actions.appendChild(leftBtns);
+  actions.appendChild(reorderBtns);
+
+  body.appendChild(topInfo);
+  body.appendChild(actions);
+
+  card.appendChild(thumb);
+  card.appendChild(body);
+
+  return card;
+}
+
+/* Section Switcher */
+function switchAdminSection(section) {
+  activeAdminSection = section;
+  const tabProjects = document.getElementById('secTabProjects');
+  const tabBranding = document.getElementById('secTabBranding');
+  const projectsGrid = document.getElementById('projectsGrid');
+  const brandingsGrid = document.getElementById('brandingsGrid');
+  const projectFilters = document.getElementById('projectFiltersWrapper');
+
+  if (section === 'projects') {
+    tabProjects.classList.add('active');
+    tabBranding.classList.remove('active');
+    projectsGrid.style.display = 'grid';
+    brandingsGrid.style.display = 'none';
+    if (projectFilters) projectFilters.style.display = 'flex';
+    document.getElementById('searchInput').placeholder = 'Search projects by title, category, or tag...';
+    renderProjects();
+  } else {
+    tabProjects.classList.remove('active');
+    tabBranding.classList.add('active');
+    projectsGrid.style.display = 'none';
+    brandingsGrid.style.display = 'grid';
+    if (projectFilters) projectFilters.style.display = 'none';
+    document.getElementById('searchInput').placeholder = 'Search branding works by title or category...';
+    renderBrandings();
+  }
+}
+
+function handleSearch() {
+  if (activeAdminSection === 'projects') {
+    filterProjects();
+  } else {
+    renderBrandings();
+  }
+}
+
+/* Branding Modal Open / Edit / Close */
+function openBrandingModal() {
+  switchAdminSection('branding');
+  document.getElementById('editBrandingIndex').value = '-1';
+  document.getElementById('brandingModalTitle').textContent = 'Add new Branding work';
+  document.getElementById('saveBrandingBtn').textContent = 'Save Branding Work';
+  document.getElementById('brandingForm').reset();
+  document.getElementById('brandImgDataUrl').value = '';
+  document.getElementById('brandDropzoneTxt').textContent = 'Click or Drag & Drop Image Here';
+  switchBrandImgTab('url');
+  updateBrandingModalPreview();
+  document.getElementById('brandingModal').classList.add('open');
+}
+
+function openEditBrandingModal(index) {
+  if (index < 0 || index >= brandings.length) return;
+  const b = brandings[index];
+  document.getElementById('editBrandingIndex').value = index;
+  document.getElementById('brandingModalTitle').textContent = 'Edit Branding Work';
+  document.getElementById('saveBrandingBtn').textContent = 'Update Branding Work';
+
+  document.getElementById('brandTitle').value = b.title || '';
+  document.getElementById('brandSlug').value = b.id || '';
+  document.getElementById('brandCat').value = b.category || '';
+  document.getElementById('brandBehanceUrl').value = b.behanceUrl || '';
+
+  const imgVal = b.img || '';
+  if (imgVal.startsWith('data:image')) {
+    switchBrandImgTab('upload');
+    document.getElementById('brandImgDataUrl').value = imgVal;
+    document.getElementById('brandImgUrl').value = '';
+    document.getElementById('brandDropzoneTxt').textContent = 'Uploaded Image Present (Click to replace)';
+  } else {
+    switchBrandImgTab('url');
+    document.getElementById('brandImgUrl').value = imgVal;
+    document.getElementById('brandImgDataUrl').value = '';
+  }
+
+  updateBrandingModalPreview();
+  document.getElementById('brandingModal').classList.add('open');
+}
+
+function closeBrandingModal() {
+  document.getElementById('brandingModal').classList.remove('open');
+}
+
+function switchBrandImgTab(tab) {
+  const urlSec = document.getElementById('brandImgUrlSection');
+  const upSec = document.getElementById('brandImgUploadSection');
+  const btnUrl = document.getElementById('brandTabBtnUrl');
+  const btnUp = document.getElementById('brandTabBtnUpload');
+
+  if (tab === 'url') {
+    urlSec.style.display = 'block';
+    upSec.style.display = 'none';
+    btnUrl.classList.add('active');
+    btnUp.classList.remove('active');
+  } else {
+    urlSec.style.display = 'none';
+    upSec.style.display = 'block';
+    btnUrl.classList.remove('active');
+    btnUp.classList.add('active');
+  }
+  updateBrandingModalPreview();
+}
+
+function handleBrandFileUpload(e) {
+  const file = e.target.files[0];
+  processBrandImageFile(file);
+}
+
+function processBrandImageFile(file) {
+  if (!file) return;
+
+  const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+  if (!allowedMime.includes(file.type)) {
+    showToast('Invalid file type! Only JPG, PNG, WEBP, and SVG are supported.', 'error');
+    return;
+  }
+
+  const maxBytes = 2.5 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    showToast('File too large! Max file size is 2.5MB.', 'error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    const dataUrl = evt.target.result;
+    document.getElementById('brandImgDataUrl').value = dataUrl;
+    document.getElementById('brandDropzoneTxt').textContent = `Uploaded: ${file.name} (${Math.round(file.size/1024)} KB)`;
+    updateBrandingModalPreview();
+    showToast('Image uploaded successfully.', 'success');
+  };
+  reader.onerror = function() {
+    showToast('Error reading image file.', 'error');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag & drop support for Branding Dropzone
+const brandDropzone = document.getElementById('brandImgDropzone');
+if (brandDropzone) {
+  brandDropzone.addEventListener('dragover', (e) => { e.preventDefault(); brandDropzone.classList.add('dragover'); });
+  brandDropzone.addEventListener('dragleave', () => { brandDropzone.classList.remove('dragover'); });
+  brandDropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    brandDropzone.classList.remove('dragover');
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processBrandImageFile(e.dataTransfer.files[0]);
+    }
+  });
+}
+
+function updateBrandingModalPreview() {
+  const title = document.getElementById('brandTitle').value.trim() || 'Branding Title';
+  const cat = document.getElementById('brandCat').value.trim() || 'Category · Subtitle';
+  const urlVal = document.getElementById('brandImgUrl').value.trim();
+  const dataVal = document.getElementById('brandImgDataUrl').value.trim();
+  const activeTab = document.getElementById('brandTabBtnUrl').classList.contains('active') ? 'url' : 'upload';
+
+  const imgSrc = (activeTab === 'url' ? sanitizeUrl(urlVal) : dataVal) || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" fill="%23141414"><rect width="240" height="180"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23555" font-size="12">Preview Image</text></svg>';
+
+  document.getElementById('brandPreviewTitle').textContent = title;
+  document.getElementById('brandPreviewCat').textContent = cat;
+  document.getElementById('brandPreviewImg').src = imgSrc;
+  document.getElementById('brandTitleCharCount').textContent = `${title.length}/100`;
+
+  const editIdx = parseInt(document.getElementById('editBrandingIndex').value, 10);
+  const slugInput = document.getElementById('brandSlug');
+  if (editIdx === -1 && document.activeElement === document.getElementById('brandTitle')) {
+    slugInput.value = title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+  }
+}
+
+async function handleSaveBranding(e) {
+  e.preventDefault();
+  const editIdx = parseInt(document.getElementById('editBrandingIndex').value, 10);
+  const title = document.getElementById('brandTitle').value.trim();
+  let slug = document.getElementById('brandSlug').value.trim().toLowerCase().replace(/[^a-z0-9_\-]+/g, '-');
+  const category = document.getElementById('brandCat').value.trim();
+  const behanceUrl = sanitizeUrl(document.getElementById('brandBehanceUrl').value.trim());
+
+  const activeTab = document.getElementById('brandTabBtnUrl').classList.contains('active') ? 'url' : 'upload';
+  let image = activeTab === 'url' ? document.getElementById('brandImgUrl').value.trim() : document.getElementById('brandImgDataUrl').value.trim();
+
+  if (!title || title.length < 2) {
+    showToast('Branding title must be at least 2 characters long.', 'error');
+    return;
+  }
+  if (!slug) slug = 'branding-' + Date.now();
+  if (!image) {
+    showToast('Please provide an image URL or upload an image file.', 'error');
+    return;
+  }
+
+  const duplicate = brandings.find((b, idx) => b.id === slug && idx !== editIdx);
+  if (duplicate) {
+    slug = slug + '-' + Math.floor(Math.random() * 900 + 100);
+  }
+
+  const payload = {
+    id: slug,
+    title: title,
+    category: category || 'Brand Identity',
+    img: image,
+    behanceUrl: behanceUrl
+  };
+
+  const saveBtn = document.getElementById('saveBrandingBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving to MongoDB...';
+  const token = getAuthToken();
+
+  try {
+    let res;
+    if (editIdx >= 0) {
+      const existing = brandings[editIdx];
+      const targetId = existing.id || existing._id;
+      res = await fetch(`${API_BASE}/api/branding/${targetId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+    } else {
+      res = await fetch(`${API_BASE}/api/branding`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    if (res.ok) {
+      const savedDoc = await res.json();
+      if (editIdx >= 0) {
+        brandings[editIdx] = savedDoc;
+        logAuditEvent(`Updated branding work '${title}' in MongoDB`, 'crud');
+        showToast(`Branding work '${title}' updated in MongoDB!`, 'success');
+      } else {
+        brandings.push(savedDoc);
+        logAuditEvent(`Created new branding work '${title}' in MongoDB`, 'crud');
+        showToast(`Branding work '${title}' saved to MongoDB!`, 'success');
+      }
+      localStorage.setItem(STORAGE_BRANDINGS_KEY, JSON.stringify(brandings));
+      closeBrandingModal();
+      renderBrandings();
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      showToast(errData.error || 'Failed to save branding work to MongoDB.', 'error');
+    }
+  } catch (err) {
+    showToast('Network error while saving branding work to MongoDB.', 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = editIdx >= 0 ? 'Update Branding Work' : 'Save Branding Work';
+  }
+}
+
+async function moveBranding(index, direction) {
+  const target = index + direction;
+  if (target < 0 || target >= brandings.length) return;
+  const temp = brandings[index];
+  brandings[index] = brandings[target];
+  brandings[target] = temp;
+
+  localStorage.setItem(STORAGE_BRANDINGS_KEY, JSON.stringify(brandings));
+  renderBrandings();
+
+  const token = getAuthToken();
+  if (token) {
+    try {
+      const b1 = brandings[index];
+      const b2 = brandings[target];
+      if (b1 && b1.id) {
+        fetch(`${API_BASE}/api/branding/${b1.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ order: index + 1 })
+        }).catch(() => {});
+      }
+      if (b2 && b2.id) {
+        fetch(`${API_BASE}/api/branding/${b2.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ order: target + 1 })
+        }).catch(() => {});
+      }
+    } catch(e) {}
+  }
+}
+
+function openDeleteBrandingModal(index) {
+  if (index < 0 || index >= brandings.length) return;
+  deleteBrandingTargetIndex = index;
+  document.getElementById('deleteBrandingTargetTitle').textContent = `"${brandings[index].title}"`;
+  document.getElementById('deleteBrandingModal').classList.add('open');
+}
+
+function closeDeleteBrandingModal() {
+  document.getElementById('deleteBrandingModal').classList.remove('open');
+  deleteBrandingTargetIndex = -1;
+}
+
+document.getElementById('confirmDeleteBrandingBtn').addEventListener('click', async () => {
+  if (deleteBrandingTargetIndex < 0 || deleteBrandingTargetIndex >= brandings.length) return;
+  const target = brandings[deleteBrandingTargetIndex];
+  const targetId = target.id || target._id;
+  const token = getAuthToken();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/branding/${targetId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      brandings.splice(deleteBrandingTargetIndex, 1);
+      localStorage.setItem(STORAGE_BRANDINGS_KEY, JSON.stringify(brandings));
+      closeDeleteBrandingModal();
+      renderBrandings();
+      logAuditEvent(`Deleted branding work '${target.title}' from MongoDB`, 'crud');
+      showToast(`Branding work '${target.title}' deleted from MongoDB.`, 'info');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      showToast(err.error || 'Failed to delete branding work from MongoDB.', 'error');
+    }
+  } catch(err) {
+    showToast('Network error while deleting branding work.', 'error');
+  }
+});
+
+/* ══════════════════════════════════════════════════════════════ */
+/* TOAST NOTIFICATION UTILITY                                     */
+/* ══════════════════════════════════════════════════════════════ */
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+
+  const icon = type === 'success' ? '✓' : (type === 'error' ? '⚠' : 'ℹ');
+  toast.innerHTML = `
+    <div style="display:flex;align-items:center;gap:.6rem">
+      <span style="font-weight:bold;color:${type==='success'?'var(--accent)':(type==='error'?'var(--danger)':'var(--warning)')}">${icon}</span>
+      <span>${escapeHTML(message)}</span>
+    </div>
+    <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem" onclick="this.parentElement.remove()">✕</button>
+  `;
+
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 350);
+  }, 4000);
+}
+
+function togglePass(inputId, btn) {
+  const el = document.getElementById(inputId);
+  if (el.type === 'password') {
+    el.type = 'text';
+    btn.textContent = 'Hide';
+  } else {
+    el.type = 'password';
+    btn.textContent = 'Show';
+  }
+}
+
+/* ── RUN ON LOAD ── */
+window.addEventListener('DOMContentLoaded', initSecurity);
+</script>
+</body>
+</html>
