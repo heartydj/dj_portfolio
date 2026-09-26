@@ -229,17 +229,64 @@ nav.scrolled{background:rgba(8,8,8,.92);backdrop-filter:blur(24px)}
 .fbns{display:flex;gap:.5rem;flex-wrap:wrap}
 .fbn{padding:.38rem .95rem;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:var(--fb);font-size:.68rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .3s}
 .fbn.act,.fbn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-d)}
-.dw-wrap{width:100%;overflow:hidden;position:relative;margin-bottom:4px}
+.dw-wrap{width:100%;overflow:hidden;position:relative;margin-bottom:4px;touch-action:pan-y}
 .dw-wrap::before,.dw-wrap::after{content:'';position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
 .dw-wrap::before{left:0;background:linear-gradient(to right,var(--bg),transparent)}
 .dw-wrap::after{right:0;background:linear-gradient(to left,var(--bg),transparent)}
-.dw-track{display:flex;gap:4px;width:max-content;will-change:transform}
-@keyframes dwLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@keyframes dwRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-.dw-r1{animation:dwLeft  28s linear infinite}
-.dw-r2{animation:dwRight 22s linear infinite}
-@media(prefers-reduced-motion:reduce){.dw-r1,.dw-r2{animation-play-state:paused}}
-.dw-wrap:hover .dw-r1,.dw-wrap:hover .dw-r2{animation-play-state:paused}
+.dw-track{
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:flex;
+  gap:4px;
+  width:-webkit-max-content;
+  width:max-content;
+  will-change:transform;
+  -webkit-transform:translate3d(0,0,0);
+  transform:translate3d(0,0,0);
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  touch-action:pan-y;
+}
+@-webkit-keyframes dwLeft{
+  0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+  100%{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
+}
+@keyframes dwLeft{
+  0%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+  100%{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
+}
+@-webkit-keyframes dwRight{
+  0%{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
+  100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+}
+@keyframes dwRight{
+  0%{-webkit-transform:translate3d(-50%,0,0);transform:translate3d(-50%,0,0)}
+  100%{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
+}
+.dw-r1{
+  -webkit-animation:dwLeft 28s linear infinite;
+  animation:dwLeft 28s linear infinite;
+}
+.dw-r2{
+  -webkit-animation:dwRight 22s linear infinite;
+  animation:dwRight 22s linear infinite;
+}
+@media(hover:hover) and (pointer:fine){
+  .dw-wrap:hover .dw-r1,.dw-wrap:hover .dw-r2{
+    -webkit-animation-play-state:paused;
+    animation-play-state:paused;
+  }
+}
+@media(hover:none),(pointer:coarse),(max-width:768px){
+  .dw-r1,.dw-r2{
+    -webkit-animation-play-state:running !important;
+    animation-play-state:running !important;
+  }
+  .dw-wrap:hover .dw-r1,.dw-wrap:hover .dw-r2{
+    -webkit-animation-play-state:running !important;
+    animation-play-state:running !important;
+  }
+}
 .dw-card{flex-shrink:0;width:200px;aspect-ratio:3/4;position:relative;overflow:hidden;cursor:pointer;background:var(--s2);transition:opacity .4s}
 .dw-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--r-ease),filter .4s}
 .dw-card:hover img{transform:scale(1.08);filter:brightness(.55)}
@@ -402,7 +449,9 @@ footer{padding:2.5rem 3rem;display:flex;align-items:center;justify-content:space
   .sk-grid{grid-template-columns:repeat(2,1fr)}
   #projects{padding:4.5rem 0}
   .prj-hdr{flex-direction:column;align-items:flex-start;padding:0 1.25rem;gap:1.2rem}
+  .dw-wrap::before,.dw-wrap::after{width:36px}
   .ig-count{padding:0 1.25rem}
+  .pause-tip{display:none}
   #branding{padding:4.5rem 1.25rem}
   .brand-grid{grid-template-columns:repeat(2,1fr);gap:.875rem}
   #services{padding:4.5rem 1.25rem}
@@ -803,18 +852,18 @@ footer{padding:2.5rem 3rem;display:flex;align-items:center;justify-content:space
   </div>
 
   <!-- ROW 1 — scrolls LEFT -->
-  <div class="dw-wrap reveal">
+  <div class="dw-wrap">
     <div class="dw-track dw-r1" id="dwR1"></div>
   </div>
 
   <!-- ROW 2 — scrolls RIGHT -->
-  <div class="dw-wrap reveal">
+  <div class="dw-wrap">
     <div class="dw-track dw-r2" id="dwR2"></div>
   </div>
 
   <!-- hidden source for lightbox index -->
   <div class="ig-grid" id="prjGrid" style="display:none"></div>
-  <div class="ig-count reveal"><span>12</span> designs &nbsp;·&nbsp; Hover to pause · Click to expand</div>
+  <div class="ig-count reveal"><span>12</span> designs &nbsp;·&nbsp; <span class="pause-tip">Hover to pause · </span>Click to expand</div>
 </section>
 
 <!-- ══ BRANDING ══ -->
